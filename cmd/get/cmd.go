@@ -3,6 +3,7 @@ package get
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 
 	"github.com/bobasensei/babu/pkg/models"
 	"github.com/spf13/cobra"
@@ -15,9 +16,9 @@ var token string
 
 func Cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get PAGE DBURL",
+		Use:   "get PAGE",
 		Short: "Get a page from storage",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE:  action,
 	}
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "display intermediate information")
@@ -27,7 +28,7 @@ func Cmd() *cobra.Command {
 func action(cmd *cobra.Command, args []string) error {
 	id := args[0]
 
-	dbURL := args[1]
+	dbURL := os.Getenv("BABU_DATABASE")
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {
 		return err

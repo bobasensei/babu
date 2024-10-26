@@ -1,7 +1,7 @@
-package list
+package initcmd
 
 import (
-	"log"
+	"errors"
 	"os"
 
 	"github.com/bobasensei/babu/pkg/models"
@@ -10,33 +10,24 @@ import (
 	"gorm.io/gorm"
 )
 
-var verbose bool
-var token string
-
 func Cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "List pages in storage",
+		Use:   "init",
+		Short: "initialize the babu datastore",
 		Args:  cobra.NoArgs,
 		RunE:  action,
 	}
-	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "display intermediate information")
 	return cmd
 }
 
 func action(cmd *cobra.Command, args []string) error {
-
 	dbURL := os.Getenv("BABU_DATABASE")
+	if dbURL == "" {
+		return errors.New("BABU_DATABASE should be set to a Postgres URL (postgres://USER:PASSWORD@HOST:PORT/DATABASE)")
+	}
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {
 		return err
 	}
-
-	var pages []models.Page
-	db.WithContext(cmd.Context()).Find(&pages)
-
-	for i, p := range pages {
-		log.Printf("%d %s\n", i, p.Id)
-	}
-	return nil
+	return db.AutoMigrate(&models.Page{})
 }

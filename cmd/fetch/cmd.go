@@ -20,9 +20,9 @@ var token string
 
 func Cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "fetch PAGE DBURL",
+		Use:   "fetch PAGE",
 		Short: "Fetch a page from Wikipedia",
-		Args:  cobra.ExactArgs(2),
+		Args:  cobra.ExactArgs(1),
 		RunE:  action,
 	}
 	cmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "display intermediate information")
@@ -31,7 +31,7 @@ func Cmd() *cobra.Command {
 
 func action(cmd *cobra.Command, args []string) error {
 	page := args[0]
-	token := os.Getenv("TOKEN")
+	token := os.Getenv("BABU_WIKIMEDIA")
 	path := "https://api.enterprise.wikimedia.com/v2/structured-contents/" + page
 	req, err := http.NewRequest("GET", path, nil)
 	if err != nil {
@@ -64,7 +64,8 @@ func action(cmd *cobra.Command, args []string) error {
 	fmt.Printf("\n\nlen=%d\n", len(docs))
 
 	log.Printf("connecting")
-	dbURL := args[1]
+	dbURL := os.Getenv("BABU_DATABASE")
+
 	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
 	if err != nil {
 		return err
