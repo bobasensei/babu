@@ -15,19 +15,17 @@ func Cmd() *cobra.Command {
 		Use:   "init",
 		Short: "initialize the babu datastore",
 		Args:  cobra.NoArgs,
-		RunE:  action,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			dbURL := os.Getenv("BABU_DATABASE")
+			if dbURL == "" {
+				return errors.New("BABU_DATABASE should be set to a Postgres URL (postgres://USER:PASSWORD@HOST:PORT/DATABASE)")
+			}
+			db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
+			if err != nil {
+				return err
+			}
+			return db.AutoMigrate(&models.Page{})
+		},
 	}
 	return cmd
-}
-
-func action(cmd *cobra.Command, args []string) error {
-	dbURL := os.Getenv("BABU_DATABASE")
-	if dbURL == "" {
-		return errors.New("BABU_DATABASE should be set to a Postgres URL (postgres://USER:PASSWORD@HOST:PORT/DATABASE)")
-	}
-	db, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{})
-	if err != nil {
-		return err
-	}
-	return db.AutoMigrate(&models.Page{})
 }
