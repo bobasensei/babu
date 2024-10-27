@@ -6,7 +6,7 @@ import (
 	"github.com/jackc/pgtype"
 )
 
-type Page struct {
+type Article struct {
 	Id        string       `json:"id" gorm:"primaryKey"`
 	Document  pgtype.JSONB `gorm:"type:jsonb" json:"document"`
 	CreatedAt time.Time    // Automatically managed by GORM

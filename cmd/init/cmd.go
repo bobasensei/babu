@@ -24,7 +24,13 @@ func Cmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return db.AutoMigrate(&models.Page{})
+			if err != db.AutoMigrate(&models.Article{}) {
+				return err
+			}
+			if err != db.AutoMigrate(&models.Content{}) {
+				return err
+			}
+			return nil
 		},
 	}
 	return cmd

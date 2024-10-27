@@ -12,6 +12,7 @@ import (
 )
 
 func Cmd() *cobra.Command {
+	var structured bool
 	cmd := &cobra.Command{
 		Use:   "get PAGE",
 		Short: "Get a page from storage",
@@ -23,19 +24,34 @@ func Cmd() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			var page models.Page
-			result := db.First(&page, "id = ?", id)
-			if result.Error != nil {
-				return result.Error
+			if structured {
+				var page models.Content
+				result := db.First(&page, "id = ?", id)
+				if result.Error != nil {
+					return result.Error
+				}
+				v := page.Document.Get()
+				b, err := json.MarshalIndent(v, "", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Printf("%s\n", string(b))
+			} else {
+				var page models.Article
+				result := db.First(&page, "id = ?", id)
+				if result.Error != nil {
+					return result.Error
+				}
+				v := page.Document.Get()
+				b, err := json.MarshalIndent(v, "", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Printf("%s\n", string(b))
 			}
-			v := page.Document.Get()
-			b, err := json.MarshalIndent(v, "", "  ")
-			if err != nil {
-				return err
-			}
-			fmt.Printf("%s\n", string(b))
 			return nil
 		},
 	}
+	cmd.Flags().BoolVar(&structured, "structured-contents", false, "fetch structured contents")
 	return cmd
 }

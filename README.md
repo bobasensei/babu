@@ -1,8 +1,8 @@
 # babu
 
-Crawl wikipedia articles using the [Structured Contents API](https://enterprise.wikimedia.com/blog/structured-contents-wikipedia-infobox/),
-save the results in a PostgreSQL database,
-profit!
+Crawl wikipedia articles using the [Article Lookup API](https://enterprise.wikimedia.com/docs/on-demand/#article-lookup)
+and the [Article Structured Contents API](https://enterprise.wikimedia.com/docs/on-demand/#article-structured-contents-beta)
+and save the results in a PostgreSQL database.
 
 ## Setup 
 
@@ -33,3 +33,5 @@ babu fetch "Ek_Tha_Raja_(album)"
 ```
 
 List the contents of your collection with `babu list` and get individual articles with `babu get`.
+
+To use the Structured Contents API, add the `--structured-contents` flag to your `fetch`, `get`, and `list` commands.
