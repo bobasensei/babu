@@ -14,7 +14,7 @@ First create a database by running this in your PostgreSQL instance, replacing U
 
 Set an environment variable to point to your database:
 ```
-export BABU_DATABASE=postgres//USERNAME:PASSWORD@HOST:PORT/babu
+export BABU_DATABASE=postgres://USERNAME:PASSWORD@HOST:PORT/babu
 ```
 
 Set an environment variable with your Wikimedia API token:
